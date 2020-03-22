@@ -1,0 +1,18 @@
+
+I run the program.
+
+This opens a UI that displays a Title and the current date in the window.
+
+I am given the option to select an existing uml text file or to create a new uml text file.
+
+The uml text files are to be named with prefixes concantenanted as follows:
+uc-{user identifier}
+cd-{user identifier}
+sd-{user identifier}
+ad-{user identifier}
+
+
+
+
+
+
