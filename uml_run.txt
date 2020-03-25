@@ -1,66 +1,56 @@
 @startuml
 
-package "Health_Providers" {
 
-object KelseySeybold {
-MRN=28815777
+package "Jim" {
+
+class Husband {
+First Name:String
+Last Name:String
+DOB:Date
+SSN:String
+Blood_type:String
 }
-
-object InternalMedicine {
-Phone=713-442-1500
-Purpose=General Health
-}
-
-KelseySeybold *-- InternalMedicine
-
-object Dr.Abbara
-InternalMedicine *-- Dr.Abbara
-
-object Pulmunary {
-Phone=713-442-2400
-Purpose=Sleep Apnea
-}
-KelseySeybold *-- Pulmunary
-
-object Dr.Farjo
-Pulmunary *-- Dr.Farjo
-
-object MDAnderson 
-MDAnderson : MRN=2020234
-
-object GenitourinaryCancerCenter {
-Phone=713-745-7575
-Purpose=Prostate Cancer
-}
-
-object Dr.Ward
-
-MDAnderson o-- GenitourinaryCancerCenter
-GenitourinaryCancerCenter o-- Dr.Ward
-
-object SpringSmiles { 
-Chart_Number=0018830
-Phone=281-350-1837
-Purpose=General Dental Care
-}
-
-object SpringEndodontics {
-Phone=281-203-0503
-Purpose=Root Canal
-}
-
-SpringSmiles --> SpringEndodontics:Referred
-
-object GreaterHoustonCounselingServices
-object Barbara_T.Lewis {
-Phone=832-717-7166
-Email=btllpcs@gmail.com
-Purpose=Therapy
-}
-
-GreaterHoustonCounselingServices o-- Barbara_T.Lewis
-
 
 }
 
-@enduml
+
+
+
+
+package "Employment" {
+
+class Title{}
+class Salary{}
+class Employer{
+Name:
+Address:
+Phone:
+}
+
+
+package "Benefits" {
+
+class Health_Ins{}
+class Life_Ins{}
+class Disability_Ins{}
+class Medical {}
+class Dental {}
+
+
+Disability_Ins <|-- LongTerm
+Disability_Ins <|-- ShortTerm
+Health_Ins <|-- Medical
+Health_Ins <|-- Dental
+
+}
+
+
+Employer o-- Benefits
+
+
+(Husband, Employer) .. Title
+(Husband, Employer) .. Salary
+
+
+
+

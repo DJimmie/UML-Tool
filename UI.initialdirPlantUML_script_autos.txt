@@ -1,0 +1,30 @@
+@startuml
+
+
+package Automobile {
+
+class Vehicle {}
+
+class AutoIns {}
+
+class CarNote {}
+
+class CarNoteLender {}
+
+class VehicleServices {}
+
+Vehicle o-- AutoIns
+Vehicle o-- CarNote
+Vehicle o-- VehicleServices
+VehicleServices <|-- RoadSide
+VehicleServices <|-- TollRoadPay
+CarNote --> CarNoteLender: Paid to
+
+
+
+
+}
+
+
+
+@enduml
