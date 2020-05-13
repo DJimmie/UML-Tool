@@ -1,66 +1,46 @@
 @startuml
-package "Health_Providers" {
 
-object KelseySeybold {
-MRN=28815777
+'class User {}
+
+abstract class CleanedData {
+getData()
+dropColumns()
+renameColumns()
+changeValues()
+convertToDatetime()
+addFeature()
+saveCleanedData()
 }
 
-object InternalMedicine {
-Phone=713-442-1500
-Purpose=General Health
+class QuickenOnline  {
+extractDate()
+removeDollarSymbol()
 }
 
-KelseySeybold *-- InternalMedicine
+class NFCUOnlineData {}
+class CapitalOneOnlineData{}
+class JSCOnlineData {}
 
-object Dr.Abbara
-InternalMedicine *-- Dr.Abbara
-
-object Pulmunary {
-Phone=713-442-2400
-Purpose=Sleep Apnea
-}
-KelseySeybold *-- Pulmunary
-
-object Dr.Farjo
-Pulmunary *-- Dr.Farjo
-
-object MDAnderson 
-MDAnderson : MRN=2020234
-
-object GenitourinaryCancerCenter {
-Phone=713-745-7575
-Purpose=Prostate Cancer
-}
-
-object Dr.Ward
-
-MDAnderson *-- GenitourinaryCancerCenter
-GenitourinaryCancerCenter *-- Dr.Ward
-
-object SpringSmiles { 
-Chart_Number=0018830
-Phone=281-350-1837
-Purpose=General Dental Care
-}
-
-object SpringEndodontics {
-Phone=281-203-0503
-Purpose=Root Canal
-}
-
-SpringSmiles --> SpringEndodontics:Referred
-
-object GreaterHoustonCounselingServices
-object Barbara_T.Lewis {
-Phone=832-717-7166
-Email=btllpcs@gmail.com
-Purpose=Therapy
-}
-
-GreaterHoustonCounselingServices o-- Barbara_T.Lewis
-
+class RawData  {
+readDataFile()
+dataInfo()
+saveAsPickle()
 
 }
 
+'RawData ..> QuickenOnline : download data
+
+class Subsets1 {}
 
 
+CleanedData <|-- QuickenOnline
+CleanedData <|-- NFCUOnlineData
+CleanedData <|-- CapitalOneOnlineData
+CleanedData <|-- JSCOnlineData
+
+QuickenOnline "1" *--  "0..*
+" Subsets1
+
+
+
+@enduml
