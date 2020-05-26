@@ -1,46 +1,25 @@
 @startuml
-
-'class User {}
-
-abstract class CleanedData {
-getData()
-dropColumns()
-renameColumns()
-changeValues()
-convertToDatetime()
-addFeature()
-saveCleanedData()
+package "Agencies"{
+class TexasSecretaryState {
++address
++phone
++website
++FileNumber: String
 }
 
-class QuickenOnline  {
-extractDate()
-removeDollarSymbol()
+class TexasComptroller {
++website
++phoneNumber
+-taxpayerNumber
+-fileNumber
+-webFileNumber
 }
 
-class NFCUOnlineData {}
-class CapitalOneOnlineData{}
-class JSCOnlineData {}
-
-class RawData  {
-readDataFile()
-dataInfo()
-saveAsPickle()
+class IRS {
++website
++phoneNumber
+-EIN
+}
 
 }
 
-'RawData ..> QuickenOnline : download data
-
-class Subsets1 {}
-
-
-CleanedData <|-- QuickenOnline
-CleanedData <|-- NFCUOnlineData
-CleanedData <|-- CapitalOneOnlineData
-CleanedData <|-- JSCOnlineData
-
-QuickenOnline "1" *--  "0..*
-" Subsets1
-
-
-
-@enduml
