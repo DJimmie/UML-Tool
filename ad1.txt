@@ -1,0 +1,15 @@
+@startuml
+|User\n<<ManualOps>>|
+
+start
+:Login Quicken;
+:configure data;
+:request download;
+fork
+:data download\n**to user download**;
+#AAAAAA:**OBJECT**\ncsv data file;
+endfork
+floating note left: csv data file
+
+
+@enduml

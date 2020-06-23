@@ -1,0 +1,46 @@
+@startuml
+
+'class User {}
+
+abstract class CleanedData {
+getData()
+dropColumns()
+renameColumns()
+changeValues()
+convertToDatetime()
+addFeature()
+saveCleanedData()
+}
+
+class QuickenOnline  {
+extractDate()
+removeDollarSymbol()
+}
+
+class NFCUOnlineData {}
+class CapitalOneOnlineData{}
+class JSCOnlineData {}
+
+class RawData  {
+readDataFile()
+dataInfo()
+saveAsPickle()
+
+}
+
+'RawData ..> QuickenOnline : download data
+
+class Subsets1 {}
+
+
+CleanedData <|-- QuickenOnline
+CleanedData <|-- NFCUOnlineData
+CleanedData <|-- CapitalOneOnlineData
+CleanedData <|-- JSCOnlineData
+
+'QuickenOnline "1" *--  "0..*" Subsets1 {}
+
+
+
+
+@enduml

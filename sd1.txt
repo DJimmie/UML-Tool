@@ -1,0 +1,37 @@
+@startuml
+
+actor Jim
+
+group User Ops
+Jim -> QuickenOnline: Login
+activate QuickenOnline
+Jim -> QuickenOnline: configure data for all dates
+Jim -> QuickenOnline: request data download
+
+QuickenOnline -> Userdldir: downloaded data
+deactivate QuickenOnline
+activate Userdldir
+
+end
+
+
+DataLocation -> Userdldir: get data
+activate DataLocation
+
+
+
+Userdldir -> dataRepo : data relocated
+deactivate DataLocation
+deactivate Userdldir
+activate dataRepo
+
+
+RawData -> dataRepo: get data
+activate RawData
+dataRepo -> RawData: data accessed
+RawData ->RawData : pd.read_csv
+RawData -> dataRepo : save as pickle file
+deactivate RawData
+
+
+activate dataCleaner
