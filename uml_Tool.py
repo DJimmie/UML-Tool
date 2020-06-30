@@ -3,8 +3,6 @@
 
 # # Dependancies
 
-# In[ ]:
-
 
 import pandas as pd
 import numpy as np
@@ -20,6 +18,7 @@ import sys
 import shutil
 import subprocess
 import time
+import webbrowser
 
 try:
     import tkinter.ttk
@@ -51,9 +50,13 @@ class UI(Tk):
     time_of_day=dt.datetime.today().strftime('%I:%M:%S %p')
     
     my_test=None
-    
     making_packages=False
+    diagram_text_list=['list of txt files']
+    txt_file_stack=None
+    file_select_status=False
+    selected_file_to_save=None
     
+
     initialdir=os.getcwd()
     
     def __init__(self,parent,*args,**kargs):
@@ -100,12 +103,14 @@ class UI(Tk):
         banner_text='PlantUML Code Here'
         frame_banner=Label(self.uml_txtbox_frame,text=banner_text,fg='white',bg='green',font='Ariel 15 bold')
         frame_banner.grid(row=0,column=0,columnspan=5,pady=15)
+        
         self.v1=StringVar()
-        self.uml_txt_file=Entry(self.uml_txtbox_frame,bg='yellow',font='Ariel 15 bold',width=30,textvariable=self.v1)
+        
+        self.uml_txt_file=ttk.Combobox(self.uml_txtbox_frame,font='Ariel 15 bold',width=30,textvariable=self.v1)
+        self.uml_txt_file['background']='yellow'
         self.uml_txt_file.grid(row=3,column=0,sticky=E)
-        
-        
-        
+        self.uml_txt_file.bind("<<ComboboxSelected>>", lambda x: self.rapid_select(self.v1.get()))
+
         self.txt='COMMENTS'
         self.uml_txt_label=Label(self.uml_txtbox_frame,text=self.txt,bg='blue',fg='yellow',font='Ariel 12 bold')
         font='Ariel 14 bold'
@@ -129,6 +134,126 @@ class UI(Tk):
         
         self.get_package=Button(self.uml_txtbox_frame, text="Get Package",bg='yellow',fg='blue',relief='raised',state='normal',command=self.open_packages)
         self.get_package.grid(row=6,column=0,sticky=E,pady=15)
+
+        self.make_pdf=Button(self.uml_txtbox_frame, text="Make Pdf",bg='orange',fg='black',relief='raised',state='normal',command=self.pdf_the_diagram)
+        self.make_pdf.grid(row=4,column=0,sticky=E,pady=15)
+
+        self.open_pdf=Button(self.uml_txtbox_frame, text="Open\nProject Pdf",bg='blue',fg='yellow',relief='raised',
+                             state='disabled',command=self.open_project_pdf)
+        self.open_pdf.grid(row=5,column=0,sticky=E,pady=15)
+
+        self.goto_plantuml_site=Button(self.uml_txtbox_frame, text="plantuml.com",bg='white',fg='blue',relief='raised',
+                                       state='normal', command=lambda: webbrowser.open('https://plantuml.com/'))
+        self.goto_plantuml_site.grid(row=6,column=0,sticky=W,pady=15)
+        
+
+   
+
+    def pdf_the_diagram(self):
+
+        # save the currently displayed png as a pdf
+        file_name=self.v1.get()
+        im1=self.load.convert('RGB')
+        print(f'{UI.initialdir}{file_name}.pdf')
+        im1.save(f'{UI.initialdir}{file_name}.pdf')
+
+        # search for all pdf documents in the working directory
+
+        l=os.listdir(path=UI.initialdir)
+        png_files_only=[]
+        for i in l:
+            s=os.path.splitext(i)
+            if (s[1]=='.png'):
+                png_files_only.append(s[0])
+        print(png_files_only)
+
+        # loop thru the png list to get the image.open
+
+        image_list=[]
+        for j in png_files_only:
+            the_png=f'{UI.initialdir}{j}.png'
+            print(the_png)
+            images = Image.open(the_png)
+            image_list.append(images)
+            
+        # loop thru the image_list to convert
+        converted_list=[]
+        for k in image_list:
+            image_convert_list=k.convert('RGB')
+            converted_list.append(image_convert_list)
+
+        # make the pdf book
+        self.folder_name=UI.initialdir.split('/')[-2]
+        k.save(f'{UI.initialdir}{self.folder_name}.pdf',save_all=True, append_images=converted_list)
+
+        self.open_pdf['state']='normal'
+            
+##        print(folder_name)
+    
+
+    def open_project_pdf(self):
+        """Open the pdf book"""
+
+        
+        print(f'doogy:{UI.initialdir}{self.folder_name}')
+        os.startfile(f'{UI.initialdir}{self.folder_name}.pdf')
+        
+
+
+        
+
+##    @staticmethod
+    def rapid_select(self,b):
+        """ Selection of txt file and associated diagram via drop down select event binding"""
+
+        UI.file_select_status=True
+
+        self.show_select_state()
+    
+        UI.selected_file_to_save=UI.txt_file_stack.pop(0).split(sep='/')[-1].split('.')[0]
+        UI.txt_file_stack.append(f'{UI.initialdir}{b}')
+
+##        print(f'pop item that is saved={UI.selected_file_to_save}')
+##        print(f'file stack:{UI.txt_file_stack}')
+
+        self.save_txt_file()
+
+        self.uml_txt.delete(1.0, END)
+        x=f'{UI.initialdir}{b}.txt'
+        x=f'{UI.txt_file_stack[0]}.txt'
+        f= open(x,"r")
+        for line in f:
+            self.uml_txt.insert(INSERT, line)
+        f.close
+
+        self.getUMLCode()
+
+        UI.file_select_status=False
+
+        self.show_select_state()
+
+    def show_select_state(self):
+        """This is a diagnosis function. Remove it when ready"""
+##        print(f'the selct state is:{UI.file_select_status}')
+        pass
+
+
+        
+    @staticmethod
+    def list_of_diagram_files():
+        """generate list of the diagram's text files for selection on the GUI"""
+
+        l=os.listdir(path=UI.initialdir)
+        txt_files_only=[]
+        for i in l:
+            s=os.path.splitext(i)
+            if (s[1]=='.txt'):
+                txt_files_only.append(s[0])
+        print(txt_files_only)
+        
+        UI.diagram_text_list=txt_files_only
+
+
         
     
     def getUMLCode(self):
@@ -166,7 +291,7 @@ class UI(Tk):
         self.the_image_path='uml_run.png'
 
         try:
-            load = Image.open(self.the_image_path)
+            self.load=load = Image.open(self.the_image_path)
             render = PIL.ImageTk.PhotoImage(load)
         except:
             load = Image.open("No_Image.png")
@@ -205,19 +330,25 @@ class UI(Tk):
     
     
     def save_txt_file(self):
+
+        if (UI.file_select_status==False):
+            self.file_name=file_name=self.v1.get()
+            shutil.copy2(self.the_image_path,f'{UI.initialdir}{file_name}.png')
+        else:
+            self.file_name=file_name=UI.selected_file_to_save
+            self.load.save(f'{UI.initialdir}{file_name}.png')
+
         
-        file_name=self.v1.get()
         plantumlcode=self.uml_txt.get("1.0","end-1c")
         if (file_name==''):
             messagebox.showwarning(title='FILE NAME REQUIRED',message='FILE NAME REQUIRED')
             return None
         else:
             f= open(f'{UI.initialdir}{file_name}.txt',"w+")
-            print(f'UI.initialdir{file_name}.txt')
+            print(f' should be saving this file={UI.initialdir}{file_name}.txt')
             f.write(plantumlcode)
             f.close
             
-        shutil.copy2(self.the_image_path,f'{UI.initialdir}{file_name}.png')
         
     def plantumlrunerror(self):
         
@@ -226,12 +357,16 @@ class UI(Tk):
     
     def open_directory(self):
         """Opens the directory folder for user to access"""
+
+        self.show_select_state()
         
         UI.making_packages=False
+
+        self.file_select_status=False
         
         x=filedialog.askopenfilename(initialdir = UI.initialdir,title = "Directory",filetypes = (("all files","*.*"),("jpeg files","*.jpg")))
         
-        print(x)
+##        print(f'x={x}')
         
         self.set_directory(x)
         
@@ -246,6 +381,11 @@ class UI(Tk):
         
         the_file_name=x.split(sep='/')[-1].split('.')[0]
         self.v1.set(the_file_name)
+
+        self.getUMLCode()
+        
+        UI.txt_file_stack=[]
+        UI.txt_file_stack.append(f'{UI.initialdir}{the_file_name}.txt')
         
         
     def set_directory(self,selectedFile):
@@ -256,6 +396,11 @@ class UI(Tk):
         the_dir=selectedFile.split(sep=filename)
         
         UI.initialdir=the_dir[0]
+
+##        print(f'mofo dir={UI.initialdir}')
+
+        UI.list_of_diagram_files()
+        self.uml_txt_file['values']=UI.diagram_text_list
         
         
     def open_packages(self):
@@ -278,7 +423,7 @@ class UI(Tk):
         f.close
         
 
-# # Functions
+# # Functions------------------Functions----------------------------Functions
 
 
 def makeRunFile(code):
