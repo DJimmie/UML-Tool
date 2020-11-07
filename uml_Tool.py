@@ -32,11 +32,29 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import PIL.Image, PIL.ImageTk
 
+import program_work_dir as pwd
+
+import logging
+
+
+# Create program working folder and its subfolders
+config_parameters={'uml_Tool.py':{'Purpose':'UML Tool using the plantuml library'}}
+client=pwd.ClientFolder(os.path.basename(__file__),config_parameters)
+ini_file=f'c:/my_python_programs/{client}/{client}.ini'
+log_file=f'c:/my_python_programs/{client}/{client}_log.log'
+uml_txt_file=f'c:/my_python_programs/{client}/{client}.txt'
+uml_png_file=f'c:/my_python_programs/{client}/{client}.png'
+
+
+logging.basicConfig(filename=log_file, level=logging.INFO, filemode='w', format=' %(asctime)s -%(levelname)s - %(message)s')
+
+
 # # Classes
 
 
 class UserInterface():
     """Parent class for the UI. Instantiates the composit Window"""
+    logging.info('UserInterface()')
     def __init__(self):
         UI(None)
         mainloop()
@@ -45,6 +63,7 @@ class UserInterface():
 class UI(Tk):
     """User Interface with fields for entering a new CSP item to the database. 
     Also, when the UI is launched, the UID and username is retrieved."""
+    logging.info('UI()')
     
     now=dt.date.today().strftime('%B %d, %Y')
     time_of_day=dt.datetime.today().strftime('%I:%M:%S %p')
@@ -56,8 +75,8 @@ class UI(Tk):
     file_select_status=False
     selected_file_to_save=None
     
-
-    initialdir=os.getcwd()
+    # initialdir=os.getcwd()
+    initialdir=None
     
     def __init__(self,parent,*args,**kargs):
         """Create the UI Window"""
@@ -90,10 +109,12 @@ class UI(Tk):
     
     def bye_bye(self):
         """Close the UI Window on menu Exit"""
+        logging.info('Exit Program')
         self.destroy()
         
     def makeumlFields(self):
         """Generate the CSP fields"""
+        logging.info('UserInterface.makeumlFields')
         # make the frame
         self.uml_txtbox_frame=Frame(self.parent)
         self.uml_txtbox_frame['background']='green'
@@ -150,12 +171,13 @@ class UI(Tk):
    
 
     def pdf_the_diagram(self):
+        logging.info('UI.pdf_the_diagram')
 
         # save the currently displayed png as a pdf
         file_name=self.v1.get()
         im1=self.load.convert('RGB')
-        print(f'{UI.initialdir}{file_name}.pdf')
-        im1.save(f'{UI.initialdir}{file_name}.pdf')
+        print(f'{UI.initialdir}\\{file_name}.pdf')
+        im1.save(f'{UI.initialdir}\\{file_name}.pdf')
 
         # search for all pdf documents in the working directory
 
@@ -193,18 +215,19 @@ class UI(Tk):
 
     def open_project_pdf(self):
         """Open the pdf book"""
+        logging.info('UI.open_project_pdf')
+
 
         
         print(f'doogy:{UI.initialdir}{self.folder_name}')
         os.startfile(f'{UI.initialdir}{self.folder_name}.pdf')
         
-
-
-        
+ 
 
 ##    @staticmethod
     def rapid_select(self,b):
         """ Selection of txt file and associated diagram via drop down select event binding"""
+        logging.info('UI.rapid_select')
 
         UI.file_select_status=True
 
@@ -219,7 +242,7 @@ class UI(Tk):
         self.save_txt_file()
 
         self.uml_txt.delete(1.0, END)
-        x=f'{UI.initialdir}{b}.txt'
+        x=f'{UI.initialdir}\\{b}.txt'
         x=f'{UI.txt_file_stack[0]}.txt'
         f= open(x,"r")
         for line in f:
@@ -242,6 +265,7 @@ class UI(Tk):
     @staticmethod
     def list_of_diagram_files():
         """generate list of the diagram's text files for selection on the GUI"""
+        logging.info('UI.list_of_diagram_files')
 
         l=os.listdir(path=UI.initialdir)
         txt_files_only=[]
@@ -257,6 +281,7 @@ class UI(Tk):
         
     
     def getUMLCode(self):
+        logging.info('UI.getUMLCode')
         
         plantumlcode=self.uml_txt.get("1.0","end-1c")
     #         print(plantumlcode)
@@ -271,8 +296,8 @@ class UI(Tk):
         
         
     def ImageUML(self):
-    
         """Display image of the UML diagram if available"""
+        logging.info('UI.ImageUML')
 
         #Create Frame---------------------------------------------------------------
         self.imageFrame=Frame(self.parent)
@@ -286,9 +311,9 @@ class UI(Tk):
 
             
     def getImage(self):
+        logging.info('UI.getImage')
         
-
-        self.the_image_path='uml_run.png'
+        self.the_image_path=uml_png_file
 
         try:
             self.load=load = Image.open(self.the_image_path)
@@ -330,13 +355,14 @@ class UI(Tk):
     
     
     def save_txt_file(self):
+        logging.info('UI.save_txt_file')
 
         if (UI.file_select_status==False):
             self.file_name=file_name=self.v1.get()
-            shutil.copy2(self.the_image_path,f'{UI.initialdir}{file_name}.png')
+            shutil.copy2(self.the_image_path,f'{UI.initialdir}\\{file_name}.png')
         else:
             self.file_name=file_name=UI.selected_file_to_save
-            self.load.save(f'{UI.initialdir}{file_name}.png')
+            self.load.save(f'{UI.initialdir}\\{file_name}.png')   
 
         
         plantumlcode=self.uml_txt.get("1.0","end-1c")
@@ -344,19 +370,21 @@ class UI(Tk):
             messagebox.showwarning(title='FILE NAME REQUIRED',message='FILE NAME REQUIRED')
             return None
         else:
-            f= open(f'{UI.initialdir}{file_name}.txt',"w+")
-            print(f' should be saving this file={UI.initialdir}{file_name}.txt')
+            f= open(f'{UI.initialdir}\\{file_name}.txt',"w+")
+            print(f' should be saving this file={UI.initialdir}\\{file_name}.txt')
             f.write(plantumlcode)
             f.close
             
         
     def plantumlrunerror(self):
+        logging.info('UI.plantumlrunerror')
         
         messagebox.showwarning(title='RUN ERROR',message='RUN ERROR. VERIFY YOUR CODE')
     
     
     def open_directory(self):
         """Opens the directory folder for user to access"""
+        logging.info('UI.open_directory')
 
         self.show_select_state()
         
@@ -368,6 +396,8 @@ class UI(Tk):
         
 ##        print(f'x={x}')
         
+        logging.info(f'file selected = {x}')
+
         self.set_directory(x)
         
         self.uml_txt.delete(1.0, END)
@@ -385,18 +415,22 @@ class UI(Tk):
         self.getUMLCode()
         
         UI.txt_file_stack=[]
-        UI.txt_file_stack.append(f'{UI.initialdir}{the_file_name}.txt')
+        UI.txt_file_stack.append(f'{UI.initialdir}\\{the_file_name}.txt')
         
         
     def set_directory(self,selectedFile):
         """Changes the initialdir for the filedialog window and uses the same directory for files saved."""
+        logging.info('UI.set_directory')
         
         filename=selectedFile.split(sep='/')[-1]
+
+        logging.info(f'filename is {filename}')
         
         the_dir=selectedFile.split(sep=filename)
         
         UI.initialdir=the_dir[0]
 
+        
 ##        print(f'mofo dir={UI.initialdir}')
 
         UI.list_of_diagram_files()
@@ -404,6 +438,7 @@ class UI(Tk):
         
         
     def open_packages(self):
+        logging.info('UI.open_packages')
         
         x=filedialog.askopenfilename(initialdir = UI.initialdir,title = "Package Directory",filetypes = (("package files","package*"),("all files","*.*")))
         print(x)
@@ -427,18 +462,17 @@ class UI(Tk):
 
 
 def makeRunFile(code):
+    logging.info('makeRunFile()')
     
-    f= open("uml_run.txt","w+")
-    
+    f= open(uml_txt_file,"w+")
     f.write(code)
-    
     f.close
 
-
 def runUmlFile():
+    logging.info('runUmlFile')
     
     try:
-        subprocess.run('python -m plantuml uml_run.txt',shell=True)
+        subprocess.run(f'python -m plantuml {uml_txt_file}',shell=True)
     except:
         UI.plantumlrunerror()
         
@@ -448,8 +482,9 @@ def runUmlFile():
 
 
 def displayUML():
+    logging.info('displayUML')
     
-    os.startfile("uml_run.png",operation='open')
+    os.startfile(uml_png_file,operation='open')
 
 
 #
@@ -457,6 +492,12 @@ def displayUML():
 
 
 if __name__ == '__main__':
+    logging.info('Start')
+
+    diagrams_folder=pwd.WorkDirectory('diagrams_folder',client_folder=client)
+
+    UI.initialdir=diagrams_folder_path=f'C:\\my_python_programs\\{diagrams_folder.client_folder}\\{diagrams_folder.client_sub_folder}'
+    
     UserInterface()
 
 
