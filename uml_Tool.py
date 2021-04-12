@@ -36,6 +36,8 @@ import program_work_dir as pwd
 
 import logging
 
+import plantuml
+
 
 # Create program working folder and its subfolders
 config_parameters={'uml_Tool.py':{'Purpose':'UML Tool using the plantuml library'}}
@@ -470,6 +472,8 @@ def makeRunFile(code):
 
 def runUmlFile():
     logging.info('runUmlFile')
+
+    print('\n'.join(sys.path))
     
     try:
         subprocess.run(f'python -m plantuml {uml_txt_file}',shell=True)
