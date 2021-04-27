@@ -32,7 +32,9 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import PIL.Image, PIL.ImageTk
 
-import program_work_dir as pwd
+# import program_work_dir as pwd
+
+from jdowd import program_work_dir as pwd
 
 import logging
 
@@ -476,7 +478,7 @@ def runUmlFile():
     print('\n'.join(sys.path))
     
     try:
-        subprocess.run(f'python -m plantuml {uml_txt_file}',shell=True)
+        subprocess.run(f'C:\\Users\\dowdj\\OneDrive\\Documents\\GitHub\\UML-Tool\\venv\\Scripts\\python -m plantuml {uml_txt_file}',shell=True)
     except:
         UI.plantumlrunerror()
         
@@ -487,7 +489,7 @@ def runUmlFile():
 
 def displayUML():
     logging.info('displayUML')
-    
+
     os.startfile(uml_png_file,operation='open')
 
 
