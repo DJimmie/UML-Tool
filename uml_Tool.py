@@ -478,7 +478,9 @@ def runUmlFile():
     print('\n'.join(sys.path))
     
     try:
-        subprocess.run(f'C:\\Users\\dowdj\\OneDrive\\Documents\\GitHub\\UML-Tool\\venv\\Scripts\\python -m plantuml {uml_txt_file}',shell=True)
+        subprocess.run(f'python -m plantuml {uml_txt_file}',shell=True)
+        # plantuml.main(filename=uml_txt_file)
+
     except:
         UI.plantumlrunerror()
         
