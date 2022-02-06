@@ -34,11 +34,22 @@ import PIL.Image, PIL.ImageTk
 
 # import program_work_dir as pwd
 
-from jdowd import program_work_dir as pwd
+from support_pkg import program_work_dir as pwd
 
 import logging
 
 import plantuml
+
+# Create a custom logger
+logger = logging.getLogger('GUI')
+logger.setLevel(logging.DEBUG)
+
+# logging file handler
+f_handler = logging.FileHandler('workflow.log',mode='w')
+f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+f_handler.setFormatter(f_format)
+f_handler.setLevel(logging.DEBUG)
+logger.addHandler(f_handler)
 
 
 # Create program working folder and its subfolders
