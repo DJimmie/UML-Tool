@@ -41,7 +41,7 @@ import logging
 import plantuml
 
 # Create a custom logger
-logger = logging.getLogger('GUI')
+logger = logging.getLogger('uml_Tool')
 logger.setLevel(logging.DEBUG)
 
 # logging file handler
@@ -60,16 +60,14 @@ log_file=f'c:/my_python_programs/{client}/{client}_log.log'
 uml_txt_file=f'c:/my_python_programs/{client}/{client}.txt'
 uml_png_file=f'c:/my_python_programs/{client}/{client}.png'
 
-
-logging.basicConfig(filename=log_file, level=logging.INFO, filemode='w', format=' %(asctime)s -%(levelname)s - %(message)s')
-
+logger.info(f'ini_file: {ini_file}, log_file: {log_file}')
 
 # # Classes
 
 
 class UserInterface():
     """Parent class for the UI. Instantiates the composit Window"""
-    logging.info('UserInterface()')
+    logger.info('class UserInterface()')
     def __init__(self):
         UI(None)
         mainloop()
@@ -78,7 +76,7 @@ class UserInterface():
 class UI(Tk):
     """User Interface with fields for entering a new CSP item to the database. 
     Also, when the UI is launched, the UID and username is retrieved."""
-    logging.info('UI()')
+    logging.info('class UI(Tk)')
     
     now=dt.date.today().strftime('%B %d, %Y')
     time_of_day=dt.datetime.today().strftime('%I:%M:%S %p')
@@ -124,12 +122,12 @@ class UI(Tk):
     
     def bye_bye(self):
         """Close the UI Window on menu Exit"""
-        logging.info('Exit Program')
+        logger.debug('def bye_bye(self)')
         self.destroy()
         
     def makeumlFields(self):
         """Generate the CSP fields"""
-        logging.info('UserInterface.makeumlFields')
+        logger.debug(' def makeumlFields(self)')
         # make the frame
         self.uml_txtbox_frame=Frame(self.parent)
         self.uml_txtbox_frame['background']='green'
@@ -186,7 +184,7 @@ class UI(Tk):
    
 
     def pdf_the_diagram(self):
-        logging.info('UI.pdf_the_diagram')
+        logger.debug('def pdf_the_diagram(self)')
 
         # save the currently displayed png as a pdf
         file_name=self.v1.get()
@@ -230,11 +228,8 @@ class UI(Tk):
 
     def open_project_pdf(self):
         """Open the pdf book"""
-        logging.info('UI.open_project_pdf')
-
-
-        
-        print(f'doogy:{UI.initialdir}{self.folder_name}')
+        logger.debug('def open_project_pdf(self)')
+        logger.info(f'doogy:{UI.initialdir}{self.folder_name}')
         os.startfile(f'{UI.initialdir}{self.folder_name}.pdf')
         
  
@@ -242,7 +237,7 @@ class UI(Tk):
 ##    @staticmethod
     def rapid_select(self,b):
         """ Selection of txt file and associated diagram via drop down select event binding"""
-        logging.info('UI.rapid_select')
+        logger.debug('def rapid_select(self,b)')
 
         UI.file_select_status=True
 
@@ -280,7 +275,7 @@ class UI(Tk):
     @staticmethod
     def list_of_diagram_files():
         """generate list of the diagram's text files for selection on the GUI"""
-        logging.info('UI.list_of_diagram_files')
+        logger.debug('def list_of_diagram_files()')
 
         l=os.listdir(path=UI.initialdir)
         txt_files_only=[]
@@ -288,7 +283,7 @@ class UI(Tk):
             s=os.path.splitext(i)
             if (s[1]=='.txt'):
                 txt_files_only.append(s[0])
-        print(txt_files_only)
+        logger.info(txt_files_only)
         
         UI.diagram_text_list=txt_files_only
 
@@ -296,7 +291,7 @@ class UI(Tk):
         
     
     def getUMLCode(self):
-        logging.info('UI.getUMLCode')
+        logger.debug('def getUMLCode(self)')
         
         plantumlcode=self.uml_txt.get("1.0","end-1c")
     #         print(plantumlcode)
@@ -312,7 +307,7 @@ class UI(Tk):
         
     def ImageUML(self):
         """Display image of the UML diagram if available"""
-        logging.info('UI.ImageUML')
+        logger.debug('def ImageUML(self)')
 
         #Create Frame---------------------------------------------------------------
         self.imageFrame=Frame(self.parent)
@@ -326,7 +321,7 @@ class UI(Tk):
 
             
     def getImage(self):
-        logging.info('UI.getImage')
+        logger.debug('def getImage(self)')
         
         self.the_image_path=uml_png_file
 
@@ -370,14 +365,18 @@ class UI(Tk):
     
     
     def save_txt_file(self):
-        logging.info('UI.save_txt_file')
+        logger.debug('def save_txt_file(self)')
 
         if (UI.file_select_status==False):
             self.file_name=file_name=self.v1.get()
             shutil.copy2(self.the_image_path,f'{UI.initialdir}\\{file_name}.png')
+            logger.info('UI.file_select_status={UI.file_select_status}')
+            logger.info(f'{UI.initialdir}\\{file_name}.png')
         else:
             self.file_name=file_name=UI.selected_file_to_save
-            self.load.save(f'{UI.initialdir}\\{file_name}.png')   
+            self.load.save(f'{UI.initialdir}\\{file_name}.png')
+            logger.info('UI.file_select_status={UI.file_select_status}')
+            logger.info(f'{UI.initialdir}\\{file_name}.png')
 
         
         plantumlcode=self.uml_txt.get("1.0","end-1c")
@@ -392,14 +391,14 @@ class UI(Tk):
             
         
     def plantumlrunerror(self):
-        logging.info('UI.plantumlrunerror')
+        logger.debug('def plantumlrunerror(self)')
         
         messagebox.showwarning(title='RUN ERROR',message='RUN ERROR. VERIFY YOUR CODE')
     
     
     def open_directory(self):
         """Opens the directory folder for user to access"""
-        logging.info('UI.open_directory')
+        logger.debug('def open_directory(self)')
 
         self.show_select_state()
         
@@ -411,7 +410,7 @@ class UI(Tk):
         
 ##        print(f'x={x}')
         
-        logging.info(f'file selected = {x}')
+        logger.info(f'file selected = {x}')
 
         self.set_directory(x)
         
@@ -435,11 +434,11 @@ class UI(Tk):
         
     def set_directory(self,selectedFile):
         """Changes the initialdir for the filedialog window and uses the same directory for files saved."""
-        logging.info('UI.set_directory')
+        logger.debug('def set_directory(self,selectedFile)')
         
         filename=selectedFile.split(sep='/')[-1]
 
-        logging.info(f'filename is {filename}')
+        logger.info(f'filename is {filename}')
         
         the_dir=selectedFile.split(sep=filename)
         
@@ -453,7 +452,7 @@ class UI(Tk):
         
         
     def open_packages(self):
-        logging.info('UI.open_packages')
+        logger.debug('def open_packages(self)')
         
         x=filedialog.askopenfilename(initialdir = UI.initialdir,title = "Package Directory",filetypes = (("package files","package*"),("all files","*.*")))
         print(x)
@@ -477,16 +476,14 @@ class UI(Tk):
 
 
 def makeRunFile(code):
-    logging.info('makeRunFile()')
+    logger.debug('def makeRunFile(code)')
     
     f= open(uml_txt_file,"w+")
     f.write(code)
     f.close
 
 def runUmlFile():
-    logging.info('runUmlFile')
-
-    print('\n'.join(sys.path))
+    logger.debug('def runUmlFile()')
     
     try:
         subprocess.run(f'python -m plantuml {uml_txt_file}',shell=True)
@@ -494,14 +491,13 @@ def runUmlFile():
 
     except:
         UI.plantumlrunerror()
+   
         
     
 #     displayUML()
 
-
-
 def displayUML():
-    logging.info('displayUML')
+    logger.debug('def displayUML()')
 
     os.startfile(uml_png_file,operation='open')
 
@@ -511,11 +507,12 @@ def displayUML():
 
 
 if __name__ == '__main__':
-    logging.info('Start')
+    logger.debug('MAIN')
 
     diagrams_folder=pwd.WorkDirectory('diagrams_folder',client_folder=client)
-
+    logger.info(diagrams_folder.client_folder)
     UI.initialdir=diagrams_folder_path=f'C:\\my_python_programs\\{diagrams_folder.client_folder}\\{diagrams_folder.client_sub_folder}'
+    logger.info(f'UI.initialdir: {UI.initialdir}')
     
     UserInterface()
 
