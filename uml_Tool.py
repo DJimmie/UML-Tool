@@ -486,10 +486,11 @@ def runUmlFile():
     logger.debug('def runUmlFile()')
     
     try:
-        subprocess.run(f'python -m plantuml {uml_txt_file}',shell=True)
-        # plantuml.main(filename=uml_txt_file)
+        subprocess.run(f'C:/Users/dowdj/OneDrive/Documents/GitHub/UML-Tool/venv/Scripts/python -m plantuml {uml_txt_file}',shell=False)
+        
 
-    except:
+    except Exception as err:
+        logger.debug(f'ERROR--->: {err}')
         UI.plantumlrunerror()
    
         
