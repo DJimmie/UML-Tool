@@ -21,7 +21,8 @@ import time
 import webbrowser
 
 try:
-    import tkinter.ttk
+    # import tkinter.ttk
+    from tkinter import ttk
     from tkinter import *
 except:
     from tkinter import *
@@ -55,10 +56,10 @@ logger.addHandler(f_handler)
 # Create program working folder and its subfolders
 config_parameters={'uml_Tool.py':{'Purpose':'UML Tool using the plantuml library'}}
 client=pwd.ClientFolder(os.path.basename(__file__),config_parameters)
-ini_file=f'c:/my_python_programs/{client}/{client}.ini'
-log_file=f'c:/my_python_programs/{client}/{client}_log.log'
-uml_txt_file=f'c:/my_python_programs/{client}/{client}.txt'
-uml_png_file=f'c:/my_python_programs/{client}/{client}.png'
+ini_file=f'{client}/{client}.ini'
+log_file=f'{client}/{client}_log.log'
+uml_txt_file=f'{client}/{client}.txt'
+uml_png_file=f'{client}/{client}.png'
 
 logger.info(f'ini_file: {ini_file}, log_file: {log_file}')
 
@@ -96,8 +97,25 @@ class UI(Tk):
         Tk.__init__(self,parent,*args,**kargs)
         
         self.parent=parent
+        self.the_image_path = uml_png_file
+        self.load = None
         self.initialize()
-        self.banner=Label(self,text=f'UML Diagrams - {UI.now}',fg='white',bg='blue',font='Ariel 30 bold')
+        
+        # Create canvas and scrollbars for scrolling
+        self.canvas = Canvas(self, bg='blue')
+        self.v_scrollbar = Scrollbar(self, orient=VERTICAL, command=self.canvas.yview)
+        self.h_scrollbar = Scrollbar(self, orient=HORIZONTAL, command=self.canvas.xview)
+        self.canvas.configure(yscrollcommand=self.v_scrollbar.set, xscrollcommand=self.h_scrollbar.set)
+        
+        self.v_scrollbar.pack(side=RIGHT, fill=Y)
+        self.h_scrollbar.pack(side=BOTTOM, fill=X)
+        self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
+        
+        self.inner_frame = Frame(self.canvas, bg='blue')
+        self.canvas.create_window((0,0), window=self.inner_frame, anchor=NW)
+        self.inner_frame.bind("<Configure>", self.on_frame_configure)
+        
+        self.banner=Label(self.inner_frame,text=f'UML Diagrams - {UI.now}',fg='white',bg='blue',font='Ariel 30 bold')
         self.banner.grid(row=0,column=0, columnspan=2)
 
 #         self.uml_txtbox_frame1()
@@ -107,18 +125,22 @@ class UI(Tk):
     def initialize(self):
         """Set-up and configure the UI window"""
         self.title('UML Project')
-        the_window_width=self.winfo_screenwidth()
-        the_window_height=self.winfo_screenheight()
-#         self.configure(width=the_window_width,height=the_window_height)
-#         the_window_width=1200
-#         the_window_height=700
+        self.update_idletasks()
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        the_window_width = min(1200, int(screen_width * 0.9))
+        the_window_height = min(600, int(screen_height * 0.8))
         self.geometry(f'{the_window_width}x{the_window_height}+0+0')
-#         self.attributes('-fullscreen', True)
+        self.resizable(True, True)
         self['borderwidth']=4
         self['bg']='blue'
         self.menubar=Menu(self)
         self.menubar.add_command(label="Exit",font='ariel',command=self.bye_bye)
         self.config(menu=self.menubar)
+    
+    def on_frame_configure(self, event):
+        """Update the scroll region to encompass the inner frame"""
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
     
     def bye_bye(self):
         """Close the UI Window on menu Exit"""
@@ -129,7 +151,7 @@ class UI(Tk):
         """Generate the CSP fields"""
         logger.debug(' def makeumlFields(self)')
         # make the frame
-        self.uml_txtbox_frame=Frame(self.parent)
+        self.uml_txtbox_frame=Frame(self.inner_frame)
         self.uml_txtbox_frame['background']='green'
         self.uml_txtbox_frame['relief']='raised'
         self.uml_txtbox_frame['borderwidth']=10
@@ -148,7 +170,7 @@ class UI(Tk):
         self.txt='COMMENTS'
         self.uml_txt_label=Label(self.uml_txtbox_frame,text=self.txt,bg='blue',fg='yellow',font='Ariel 12 bold')
         font='Ariel 14 bold'
-        self.uml_txt=Text(self.uml_txtbox_frame,borderwidth=2,height=30,width=60,font=font,wrap=WORD)
+        self.uml_txt=Text(self.uml_txtbox_frame,borderwidth=2,height=20,width=60,font=font,wrap=WORD)
         self.uml_txt.insert(INSERT, "@startuml\n\n\n@enduml")
         self.uml_txt.tag_add("here", "1.0", "1.4")
         self.uml_txt.tag_config("here", background="yellow", foreground="blue")
@@ -298,7 +320,11 @@ class UI(Tk):
 
         makeRunFile(plantumlcode)
 
-        runUmlFile()
+        try:
+            runUmlFile()
+        except Exception as err:
+            logger.debug(f'ERROR--->: {err}')
+            self.plantumlrunerror()
         
         self.ImageUML()
         
@@ -310,7 +336,7 @@ class UI(Tk):
         logger.debug('def ImageUML(self)')
 
         #Create Frame---------------------------------------------------------------
-        self.imageFrame=Frame(self.parent)
+        self.imageFrame=Frame(self.inner_frame)
         self.imageFrame['background']='red'
         self.imageFrame['relief']='sunken'
         self.imageFrame['borderwidth']=9
@@ -336,8 +362,8 @@ class UI(Tk):
         hgt=render.height()
         wth=render.width()
         
-        hgt=800
-        wth=1000
+        hgt=min(hgt, 500)
+        wth=min(wth, 800)
         
         img_ref=Label(image=render)
         img_ref.image=render
@@ -478,6 +504,7 @@ class UI(Tk):
 def makeRunFile(code):
     logger.debug('def makeRunFile(code)')
     
+    os.makedirs(os.path.dirname(uml_txt_file), exist_ok=True)
     f= open(uml_txt_file,"w+")
     f.write(code)
     f.close
@@ -485,13 +512,7 @@ def makeRunFile(code):
 def runUmlFile():
     logger.debug('def runUmlFile()')
     
-    try:
-        subprocess.run(f'C:/Users/dowdj/OneDrive/Documents/GitHub/UML-Tool/venv/Scripts/python -m plantuml {uml_txt_file}',shell=False)
-        
-
-    except Exception as err:
-        logger.debug(f'ERROR--->: {err}')
-        UI.plantumlrunerror()
+    subprocess.run([sys.executable, '-m', 'plantuml', uml_txt_file])
    
         
     
@@ -512,7 +533,7 @@ if __name__ == '__main__':
 
     diagrams_folder=pwd.WorkDirectory('diagrams_folder',client_folder=client)
     logger.info(diagrams_folder.client_folder)
-    UI.initialdir=diagrams_folder_path=f'C:\\my_python_programs\\{diagrams_folder.client_folder}\\{diagrams_folder.client_sub_folder}'
+    UI.initialdir=diagrams_folder_path=f'{diagrams_folder.client_folder}\\{diagrams_folder.client_sub_folder}'
     logger.info(f'UI.initialdir: {UI.initialdir}')
     
     UserInterface()

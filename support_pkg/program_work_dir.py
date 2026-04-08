@@ -26,7 +26,7 @@ class ClientFolder():
         """Check for the working directory. If does not exist, then call the class ClientFolder() that creates it."""
 
         # search for the C:\\parent_folder\
-        folder_path=f'C:\\my_python_programs\\{self.client_folder_name}'
+        folder_path=f'{self.client_folder_name}'
         verify=os.path.exists(folder_path)
 
         print(verify)
@@ -60,7 +60,7 @@ class ConfigFile():
             # print (value)
             self.config[key]=value
          
-        config_file=f'C:\\my_python_programs\\{self.client_folder}\\{self.client_folder}.ini'
+        config_file=f'{self.client_folder}\\{self.client_folder}.ini'
         with open(config_file, 'w') as configfile:
             self.config.write(configfile)
 
@@ -77,7 +77,7 @@ class WorkDirectory():
 
     def make(self):
         try:
-            x=os.makedirs(f'C:\\my_python_programs\\{self.client_folder}\\{self.client_sub_folder}')
+            x=os.makedirs(f'{self.client_folder}\\{self.client_sub_folder}')
             return x
         except FileExistsError:
             return 
