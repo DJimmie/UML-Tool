@@ -211,8 +211,8 @@ class UI(Tk):
         # save the currently displayed png as a pdf
         file_name=self.v1.get()
         im1=self.load.convert('RGB')
-        print(f'{UI.initialdir}\\{file_name}.pdf')
-        im1.save(f'{UI.initialdir}\\{file_name}.pdf')
+        print(f'{UI.initialdir}\{file_name}.pdf')
+        im1.save(f'{UI.initialdir}\{file_name}.pdf')
 
         # search for all pdf documents in the working directory
 
