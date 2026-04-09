@@ -4,6 +4,7 @@
 ***_ Bemco Units 1 thru 5
 ***_ Russell Units 1 thru 11
 ***_ Hot Oil Heating Units 1 thru 3
+***_ Cooperheat Blanket Heating Unit
 ** DAQ System
 ***_  cRIO LabView (CELL 15 thru 22)
 ***_  cRIO LabView (CELL 12 Firelab)
@@ -27,10 +28,18 @@
 ** PTM
 ***_  1MM
 ***_  2MM
+***_  3MM
 ***_  4.5MM
 ** HPU
+***_  H-6
+***_  H-11
+***_  PIT5_HPU
+***_  HPU_1(PIT1 thru PIT4)
+
 ** Pump
-** Test Manifold
+***_ Various Standalone Pumps
+** Test Manifold (CELL 15 thru 22)
+***_ 45KSI |2 zone|8 Ports 
 
 @endwbs
 
