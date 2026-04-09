@@ -17,6 +17,10 @@
 ****_ Dewesoft (Dewesoft DAQ #1)
 ****_ Dewesoft (Dewesoft DAQ #2)
 ****_ Dewesoft (Dewesoft DAQ #3)
+***_  SCADA Network (CELL 15 thru 22)
+****_ Ignition Automation Software
+
+
 ** Sensors
 ***_  Pressure Transducer
 ***_  Pressure Transmitter
@@ -25,6 +29,7 @@
 ***_  Temperature Transmitter
 ***_  Load Cell
 ***_  Strain Gage
+***_  Linear Displacement Sensor (LDS)
 ** PTM
 ***_  1MM
 ***_  2MM
@@ -39,7 +44,11 @@
 ** Pump
 ***_ Various Standalone Pumps
 ** Test Manifold (CELL 15 thru 22)
-***_ 45KSI |2 zone|8 Ports 
+***_ 45KSI | 2 zone | 8 Ports 
+** Bend & Torsion
+** Strongback
+** Hyperbaric Chamber
+** Fire Lab (CELL12)
 
 @endwbs
 
