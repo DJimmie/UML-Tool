@@ -20,7 +20,7 @@ matplotlib==3.10.8
 numpy==2.2.6
 packaging==26.0
 pandas==2.3.3
-pillow==12.2.0
+pillow==12.3.0
 plantuml==0.3.0
 pyinstaller==6.19.0
 pyinstaller-hooks-contrib==2026.4
